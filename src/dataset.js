@@ -14,12 +14,7 @@ export async function startDataset(game, canvas, status) {
   }
 
   let n = 0, frame = 0, busy = false;
-  game.reset();
-  return () => {
-    if (game.over) game.reset(); // partidas encadeadas, cada uma com seed nova
-    bot(game);
-    if (++frame % EVERY_N_FRAMES || busy) return;
-
+  const capture = () => {
     busy = true;
     const labels = game.labels()
       .map(l => `${l.cls} ${l.cx.toFixed(6)} ${l.cy.toFixed(6)} ${l.w.toFixed(6)} ${l.h.toFixed(6)}`)
@@ -27,12 +22,25 @@ export async function startDataset(game, canvas, status) {
     const name = String(n).padStart(6, '0');
     const split = n % 10 === 0 ? 'val' : 'train'; // 10% validação
     n++;
+    // toBlob copia o canvas na hora da chamada; a codificação do JPEG é que é assíncrona
     canvas.toBlob(async blob => {
-      await write(dirs[`images/${split}`], `${name}.jpg`, blob);
+      // .txt antes do .jpg: se a gravação for interrompida, sobra um .txt sem imagem (ignorado
+      // no treino) e não uma imagem sem rótulo (que o treino leria como "frame vazio")
       await write(dirs[`labels/${split}`], `${name}.txt`, labels);
+      await write(dirs[`images/${split}`], `${name}.jpg`, blob);
       status(`${n} frames salvos`);
       busy = false;
     }, 'image/jpeg', 0.9);
+  };
+
+  game.reset();
+  return () => {
+    // O main.js já desenhou este frame. Os rótulos têm de sair desse MESMO estado, então tudo o
+    // que muda o jogo (reset, corte do bot) vem depois da captura. Antes, o bot cortava primeiro e
+    // a fruta aparecia inteira na imagem, mas sem caixa no .txt.
+    if (game.over) { game.reset(); return; } // frame de "Fim de jogo": não grava
+    if (++frame % EVERY_N_FRAMES === 0 && !busy) capture();
+    bot(game);
   };
 }
 
