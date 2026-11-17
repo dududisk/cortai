@@ -1,0 +1,11 @@
+data/
+**/.venv/
+logs/
+__pycache__/
+*.pt
+runs/
+node_modules/
+rag/.env
+*.env
+.env*
+docs/*.pdf
