@@ -1,0 +1,11 @@
+# Gerados localmente pelo treino (não versionar)
+.venv/
+runs/
+cache/
+weights/
+.ultralytics/
+*.pt
+*.onnx
+# Recriados pelo train.py a cada execução, com caminhos absolutos da máquina
+splits/
+data.yaml

@@ -1,0 +1,31 @@
+# Export para TF.js (opcional, Etapa 1). NÃO instale no venv de treino: TF <= 2.19 exige numpy < 2.
+# Versões tiradas do extra "export-tensorflow" da própria Ultralytics 8.4.215. Não testado neste PC.
+#
+# RECOMENDADO: Google Colab (Linux com CPU moderno). Suba best.pt e training/export.py e rode:
+#   pip install -r requirements-export.txt
+#   python export.py --weights best.pt
+#   (baixe a pasta models/yolo11n_web inteira)
+#
+# Alternativa: Linux x86-64 / WSL2 com Python 3.12:
+#   python3.12 -m venv training/.venv-export
+#   training/.venv-export/bin/pip install -r training/requirements-export.txt
+#   training/.venv-export/bin/python training/export.py
+#
+# Windows nativo (não recomendado): o tensorflowjs depende de tensorflow-decision-forests, que não tem
+# wheel para Windows, e o conversor faz "import tensorflow_decision_forests" incondicional. Seria preciso
+# instalar tensorflowjs com --no-deps, instalar à mão tensorflow-hub, jax, jaxlib, flax, h5py,
+# importlib_resources e six, e criar um pacote vazio tensorflow_decision_forests. Além disso, este PC
+# não tem AVX2, e os wheels de tensorflow/jaxlib podem travar nele.
+ultralytics==8.4.215
+numpy<2
+tensorflow==2.19.0
+tf_keras==2.19.0
+onnx2tf>=1.26.3,<1.29.0
+sng4onnx>=1.0.1
+onnx_graphsurgeon>=0.3.26
+ai-edge-litert>=1.2.0
+onnx
+onnxslim
+onnxruntime
+protobuf>=5
+tensorflowjs==4.22.0

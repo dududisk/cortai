@@ -1,0 +1,12 @@
+# Treino do YOLO11n (Etapa 1). Instale SÓ no venv training/.venv (nada global):
+#   py -3.12 -m venv training/.venv
+#   training/.venv/Scripts/python -m pip install -r training/requirements.txt
+# No Windows o torch do PyPI é CPU. Com GPU NVIDIA, instale antes o torch CUDA
+# (https://pytorch.org/get-started/locally/) e depois este arquivo.
+# O export para TF.js usa outro ambiente: veja requirements-export.txt.
+ultralytics==8.4.215
+torch==2.15.0
+torchvision==0.29.2
+# A Ultralytics usa polars para ler o results.csv. O runtime padrão do polars exige AVX2 e
+# trava com "Illegal instruction" em CPUs antigos (ex.: i5-2400S). O rtcompat funciona em qualquer x86-64.
+polars[rtcompat]==2.1.0
